@@ -7,7 +7,7 @@
 ## 👥 Авторы
 
 - Участник 1: [VovkaDeMorton](https://github.com/VovkaDeMorton)
-- Участник 2: [username напарника](https://github.com/username)
+- Участник 2: [PLaQue049](https://github.com/PLaQue049)
 
 ## 📋 Описание проекта
 
