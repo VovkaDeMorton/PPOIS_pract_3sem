@@ -111,9 +111,10 @@
 
 _(будет заполнено по мере разработки)_
 
-`bash
+```bash
 mkdir build
 cd build
 cmake ..
 cmake --build .
 ./smart_home
+```
