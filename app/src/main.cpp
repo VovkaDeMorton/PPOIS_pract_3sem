@@ -1,30 +1,51 @@
 #include <iostream>
 #include "EventBus.h"
+#include "Subscription.h"
 
-// Тестовый слушатель. Он наследуется от нашего интерфейса
+// Наш тестовый слушатель. Добавил ему имя, чтобы в консоли было видно, 
+// кто именно получает событие (ALL-LOGGER или MOTION-LOGGER).
 class Logger : public EventListener {
+private:
+    std::string name;
 public:
-    // Ключевое слово override говорит компилятору
-    // "Я переопределяю виртуальный метод из базового класса"
-    // Это защищает от опечаток в названии метода.
+    Logger(std::string n) : name(n) {}
+    
     void onEvent(const Event& event) override {
-        std::cout << "[Logger] Received event: " << event.getType() << "\n";
+        std::cout << "[" << name << "] Received event: " << event.getType() << "\n";
     }
 };
 
 int main() {
-    std::cout << "Smart Home System - Starting...\n";
+    std::cout << "Smart Home System - Testing Event Filters & RAII...\n";
     
-    // 1. Создаем шину и наш логгер
     EventBus bus;
-    Logger logger;
     
-    // 2. Подписываем логгер на шину
-    bus.subscribe(&logger);
+    // ТЕСТ 1: Фильтрация событий
+    Logger allLogger("ALL-LOGGER");
+    Logger motionLogger("MOTION-LOGGER");
     
-    // 3. Создаем событие и публикуем его в шину
-    Event motionEvent("MotionDetected");
-    bus.publish(motionEvent);
+    bus.subscribe(&allLogger);                      // Слушает всё
+    bus.subscribe(&motionLogger, "MotionDetected"); // Слушает только движение
+    
+    std::cout << "\n--- Test 1: Publishing MotionDetected ---\n";
+    bus.publish(Event("MotionDetected"));
+
+    std::cout << "\n--- Test 2: Publishing TempChanged ---\n";
+    bus.publish(Event("TempChanged"));
+
+    // ТЕСТ 2: RAII Автоотписка (новый шаг)
+    std::cout << "\n--- Test 3: Testing RAII Subscription ---\n";
+    {
+        // Создаем временного логгера и умную обертку для него
+        Logger tempLogger("TEMP-LOGGER");
+        Subscription sub(bus, &tempLogger);
+        
+        std::cout << "Publishing while TEMP-LOGGER is alive:\n";
+        bus.publish(Event("MotionDetected")); // Слышат все трое (allLogger, motionLogger, tempLogger)
+    } // ВОТ ЗДЕСЬ срабатывает деструктор Subscription! tempLogger отписывается.
+
+    std::cout << "\nPublishing after TEMP-LOGGER is destroyed:\n";
+    bus.publish(Event("MotionDetected")); // Слышат только allLogger и motionLogger
 
     return 0;
 }

@@ -1,19 +1,29 @@
 #pragma once
 #include <vector>
+#include <string>
 #include "Event.h"
 #include "EventListener.h"
 
-// Сама шина событий. Она хранит список подписчиков и рассылает им события
+// Добавил эту структуру, чтобы хранить не только самого слушателя, 
+// но и то, на какое конкретно событие он подписан.
+struct SubscriptionInfo {
+    EventListener* listener;
+    std::string eventType; // Если строка пустая — значит, слушатель хочет получать ВСЕ события
+};
+
 class EventBus {
 private:
-    // Вектор указателей на слушателей. 
-    // Мы храним именно указатели (*), чтобы шина не копировала объекты.
-    std::vector<EventListener*> listeners;
+    // Раньше хранил просто указатели (std::vector<EventListener*>), 
+    // но теперь мнужно хранить еще и фильтр, поэтому используем новую структуру.
+    std::vector<SubscriptionInfo> listeners;
 
 public:
-    // Метод для подписки на события
-    void subscribe(EventListener* listener);
+    // Добавил второй параметр eventType. 
+    // По умолчанию он равен пустой строке, чтобы старый код (без фильтра) продолжал работать.
+    void subscribe(EventListener* listener, const std::string& eventType = "");
+
+    // Добавил метод для отписки. Он нужен для умной обертки Subscription (RAII).
+    void unsubscribe(EventListener* listener);
     
-    // Метод для публикации (рассылки) события всем подписчикам
     void publish(const Event& event);
 };
