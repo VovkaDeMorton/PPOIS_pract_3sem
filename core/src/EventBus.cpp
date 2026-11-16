@@ -32,3 +32,11 @@ void EventBus::publish(const Event& event) {
         }
     }
 }
+
+void EventBus::clear() {
+    listeners.clear();
+}
+
+size_t EventBus::getListenersCount() const {
+    return listeners.size();
+}

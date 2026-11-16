@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <cstddef>
 #include "Event.h"
 #include "EventListener.h"
 
@@ -26,4 +27,7 @@ public:
     void unsubscribe(EventListener* listener);
     
     void publish(const Event& event);
+
+    void clear();
+    size_t getListenersCount() const;
 };

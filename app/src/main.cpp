@@ -1,51 +1,49 @@
 #include <iostream>
 #include "EventBus.h"
-#include "Subscription.h"
+#include "RuleEngine.h"
 
-// Наш тестовый слушатель. Добавил ему имя, чтобы в консоли было видно, 
-// кто именно получает событие (ALL-LOGGER или MOTION-LOGGER).
-class Logger : public EventListener {
-private:
-    std::string name;
+// --- Тестовое условие: всегда истинно ---
+class AlwaysTrue : public Condition {
 public:
-    Logger(std::string n) : name(n) {}
-    
-    void onEvent(const Event& event) override {
-        std::cout << "[" << name << "] Received event: " << event.getType() << "\n";
-    }
+    bool isSatisfied(const Event& event) const override { return true; }
+};
+
+// --- Тестовое действие: просто печатает текст ---
+class PrintAction : public Action {
+private:
+    std::string message;
+public:
+    PrintAction(std::string msg) : message(msg) {}
+    void execute() override { std::cout << "[ACTION] " << message << "\n"; }
 };
 
 int main() {
-    std::cout << "Smart Home System - Testing Event Filters & RAII...\n";
+    std::cout << "Smart Home System - Testing Rule Engine...\n";
     
     EventBus bus;
-    
-    // ТЕСТ 1: Фильтрация событий
-    Logger allLogger("ALL-LOGGER");
-    Logger motionLogger("MOTION-LOGGER");
-    
-    bus.subscribe(&allLogger);                      // Слушает всё
-    bus.subscribe(&motionLogger, "MotionDetected"); // Слушает только движение
-    
-    std::cout << "\n--- Test 1: Publishing MotionDetected ---\n";
+    RuleEngine engine(bus);
+
+    // 1. Создаем правило: Если пришло "MotionDetected" -> Выполнить PrintAction
+    auto condition = std::make_shared<AlwaysTrue>();
+    auto action = std::make_shared<PrintAction>("Turning ON the light!");
+    auto motionRule = std::make_shared<Rule>(condition, action, "MotionDetected");
+
+    // 2. Добавляем правило в движок (он сам подпишет его на шину)
+    engine.addRule(motionRule);
+
+    std::cout << "\nTotal listeners on bus: " << bus.getListenersCount() << "\n";
+
+    // 3. Публикуем событие движения. Должно сработать правило!
+    std::cout << "\n--- Publishing MotionDetected ---\n";
     bus.publish(Event("MotionDetected"));
 
-    std::cout << "\n--- Test 2: Publishing TempChanged ---\n";
+    // 4. Публикуем другое событие. Правило должно проигнорировать.
+    std::cout << "\n--- Publishing TempChanged ---\n";
     bus.publish(Event("TempChanged"));
 
-    // ТЕСТ 2: RAII Автоотписка (новый шаг)
-    std::cout << "\n--- Test 3: Testing RAII Subscription ---\n";
-    {
-        // Создаем временного логгера и умную обертку для него
-        Logger tempLogger("TEMP-LOGGER");
-        Subscription sub(bus, &tempLogger);
-        
-        std::cout << "Publishing while TEMP-LOGGER is alive:\n";
-        bus.publish(Event("MotionDetected")); // Слышат все трое (allLogger, motionLogger, tempLogger)
-    } // ВОТ ЗДЕСЬ срабатывает деструктор Subscription! tempLogger отписывается.
-
-    std::cout << "\nPublishing after TEMP-LOGGER is destroyed:\n";
-    bus.publish(Event("MotionDetected")); // Слышат только allLogger и motionLogger
+    // 5. Очищаем шину
+    bus.clear();
+    std::cout << "\nBus cleared. Listeners: " << bus.getListenersCount() << "\n";
 
     return 0;
 }
