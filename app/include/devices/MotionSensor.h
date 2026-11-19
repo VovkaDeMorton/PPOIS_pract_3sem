@@ -1,7 +1,7 @@
 #pragma once
 #include "Device.h"
 
-class MotionSensor : public Device 
+class MotionSensor : public Device {
 private:
     bool enabled;
 
