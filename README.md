@@ -87,15 +87,15 @@
 
 Отвечает за модель устройств и пользовательское взаимодействие.
 
-- [ ] Абстрактный класс Device + иерархия устройств
-- [ ] Конкретные устройства: Lamp, Thermostat, MotionSensor, DoorLock, Alarm
-- [ ] Класс DeviceRegistry (реестр устройств)
-- [ ] Генерация событий устройствами
+- [x] Абстрактный класс Device + иерархия устройств
+- [x] Конкретные устройства: Lamp, Thermostat, MotionSensor, DoorLock, Alarm
+- [x] Класс DeviceRegistry (реестр устройств)
+- [x] Генерация событий устройствами
 - [ ] Класс Logger + выходные потоки (ConsoleOutput, FileOutput)
-- [ ] Класс ConfigParser (чтение JSON/INI)
-- [ ] Класс Scenario / ScenarioManager
-- [ ] Консольное меню и CommandParser
-- [ ] Иерархия Command (паттерн Command)
+- [x] Класс ConfigParser (чтение JSON/INI)
+- [x] Класс Scenario / ScenarioManager
+- [x] Консольное меню и CommandParser
+- [x] Иерархия Command (паттерн Command)
 - [ ] Сохранение состояния системы между запусками
 
 ### Совместные задачи
