@@ -22,4 +22,8 @@ public:
     // Чисто виртуальный метод. У каждого устройства должен быть 
     // способ вывести свой статус в консоль или лог.
     virtual std::string getStatus() const = 0;
+    virtual std::string getType() const = 0;
+
+    virtual void turnOn() {}
+    virtual void turnOff() {}
 };

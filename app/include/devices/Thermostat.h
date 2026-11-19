@@ -10,5 +10,6 @@ public:
     
     void setTemperature(int temp);
     int getTemperature() const { return currentTemp; }
+    std::string getType() const override { return "Thermostat"; }
     std::string getStatus() const override;
 };

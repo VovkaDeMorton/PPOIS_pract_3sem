@@ -1,7 +1,8 @@
 #include "Lamp.h"
 #include <utility> // Добавлено для std::move
 
-Lamp::Lamp(std::string name, EventBus& bus) : Device(std::move(name), bus), isOn(false) {}
+Lamp::Lamp(std::string name, EventBus& bus) :
+    Device(std::move(name), bus), isOn(false) {}
 
 void Lamp::turnOn() {
     if (!isOn) {

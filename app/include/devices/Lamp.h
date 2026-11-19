@@ -10,5 +10,6 @@ public:
     
     void turnOn();
     void turnOff();
+    std::string getType() const override { return "Lamp"; }
     std::string getStatus() const override;
 };

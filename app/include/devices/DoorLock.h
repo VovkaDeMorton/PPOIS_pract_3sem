@@ -10,5 +10,8 @@ public:
     
     void lock();
     void unlock();
+    void turnOn() override { lock(); }
+    void turnOff() override { unlock(); }
+    std::string getType() const override { return "DoorLock"; }
     std::string getStatus() const override;
 };
