@@ -53,6 +53,7 @@ int ConfigParser::loadDevicesFromFile(const std::string& filepath, DeviceRegistr
             ++count;
         }
         else if (type == "Thermostat") {
+            int temp = 22;
             std::string tempStr;
             if (iss >> tempStr) { // ≈сли после имени есть хоть какой-то текст
                 try {
