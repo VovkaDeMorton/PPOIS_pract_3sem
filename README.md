@@ -92,7 +92,7 @@
 - [x] Класс DeviceRegistry (реестр устройств)
 - [x] Генерация событий устройствами
 - [ ] Класс Logger + выходные потоки (ConsoleOutput, FileOutput)
-- [x] Класс ConfigParser (чтение JSON/INI)
+- [x] Класс ConfigParser (чтение текстового файла)
 - [x] Класс Scenario / ScenarioManager
 - [x] Консольное меню и CommandParser
 - [x] Иерархия Command (паттерн Command)
